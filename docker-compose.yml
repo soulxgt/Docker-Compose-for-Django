@@ -1,0 +1,73 @@
+version: '3'
+services:
+
+  ### Django Project-1 container #########################################
+  book:
+      build:
+        #构建django项目book容器的路径
+        context: ./build/django
+      volumes: #项目数据持久化配置---包括项目、uwsgi配置文件
+        - ${PROJECT_FOLDER}/book:/wwwroot/book
+        - ./work/components/uwsgi/book/uwsgi.ini:/etc/uwsgi/book/uwsgi.ini
+      restart: always #系统重启后容器自动启动
+      privileged: true   #容器启动后是否有系统权限
+      networks:   #定义该容器的网桥名称和IP地址
+          net-django:
+            ipv4_address: 10.127.2.5
+      command: uwsgi --ini /etc/uwsgi/book/uwsgi.ini   #容器启动后执行的命令，必须要此命令，以项目uwsgi配置文件启动uwsgi
+
+  ### Django Project-2 container #########################################
+  hos:
+      build:
+        #构建django项目hos容器的路径
+        context: ./build/django
+      volumes: #项目数据持久化配置---包括项目、uwsgi配置文件
+        - ${PROJECT_FOLDER}/hos:/wwwroot/hos
+        - ./work/components/uwsgi/hos/uwsgi.ini:/etc/uwsgi/hos/uwsgi.ini
+      restart: always  #系统重启后容器自动启动
+      privileged: true  #容器启动后是否有系统权限
+      networks:   #定义该容器的网桥名称和IP地址
+          net-django:
+            ipv4_address: 10.127.2.4
+      command: uwsgi --ini /etc/uwsgi/hos/uwsgi.ini   #容器启动后执行的命令，必须要此命令，以项目uwsgi配置文件启动uwsgi
+
+  ### Nginx container #########################################
+  nginx: 
+    image: nginx  #定义nginx使用的镜像，直接从docker hub上获取
+    ports:    #定义nginx开放的web端口 80和8080
+      - "80:80"
+      - "8080:8080"
+    volumes:   #nginx数据持久化配置---包括项目、项目nginx配置文件和nginx日志文件
+      - ${PROJECT_FOLDER}/wwwroot:/wwwroot
+      - ./work/components/nginx/config/nginx.conf:/etc/nginx/nginx.conf  #windows需要rw权限才能开启nginx服务
+      - ./work/components/nginx/config/conf.d:/etc/nginx/conf.d
+      - ./work/components/nginx/log:/var/log/nginx
+    restart: always   #系统重启后容器自动启动
+    privileged: true  #容器启动后是否有系统权限
+    networks:     #定义nginx容器的网桥名称和IP地址
+      net-django:
+        ipv4_address: 10.127.2.3
+
+  ### Mariadb container #########################################
+  mysql:
+      image: mysql:5.7   #定义mariadb使用的镜像，直接从docker hub上获取
+      ports:   #定义mariadb开放的数据库端口 根据.env配置变量获取 ${MYSQL_PORT}端口
+        - "${MYSQL_PORT}:3306"  # ${MYSQL_PORT}表示地址映射后的端口，3306表示mariadb容器内的端口
+      volumes:   #mariadb数据持久化配置---包括数据库存储位置、数据库配置文件和数据库日志文件路径
+        - ./work/components/mysql/data:/var/lib/mysql
+        - ./work/components/mysql/config/my.cnf:/etc/mysql/conf.d/my.cnf
+        - ./work/components/mysql/log:/var/log/mysql
+      restart: always   #系统重启后容器自动启动
+      privileged: true   #容器启动后是否有系统权限
+      environment:   
+        MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}   #通过系统变量${MYSQL_PASSWORD} 设置mariadb镜像定义的变量MYSQL_ROOT_PASSWORD
+      networks:    #定义mariadb容器的网桥名称和IP地址
+        net-django:  
+          ipv4_address: 10.127.2.2
+
+### Add Network Bridge info #########################################
+networks:   #定义整个docker-compose编排的容器使用的网桥名称和IP地址网段，注意 x.x.x.1不能使用
+  net-django:
+    ipam:
+      config:
+        - subnet: 10.127.2.0/24
