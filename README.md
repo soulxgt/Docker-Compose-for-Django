@@ -2,7 +2,7 @@
 
 # 说明
 
-docker compose一建部署的命令 Nginx Mysql Django 环境，多应用版本。
+docker compose一建部署的命令 Nginx Mysql uwsgi Django 环境，多应用版本。
 
 主要用途是为了方便自己快速搭建应用环境。
 
@@ -70,7 +70,13 @@ docker-framework
                         __init__.py
 ```
 
+# 部署
 
+1、根据拷贝的环境修改`.env`变量。
+
+2、使用docker命令部署
+
+>  docker-compose up .
 
 # 收尾
 
