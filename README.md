@@ -13,61 +13,65 @@ docker compose一建部署的命令 Nginx Mysql uwsgi Django 环境，多应用�
 # 配置
 
 ```
-
-docker-framework
-    │  .env                        # 环境变量
-    │  docker-compose.yml          # docker compose 主文件
-    │  README.md                   # 说明文档
-    │  
-    ├─build
-    │  └─django
-    │          Dockerfile          # django环境build文件
-    │          requirements.txt    # django环境安装插件
-    │          
-    └─work
-        ├─components
-        │  ├─mysql
-        │  │  ├─config
-        │  │  │      my.cnf        #mysql 配置
-        │  │  │      
-        │  │  ├─data
-        │  │  └─log
-        │  ├─nginx
-        │  │  ├─config
-        │  │  │  │  nginx.conf    # nginx配置
-        │  │  │  │  
-        │  │  │  └─conf.d
-        │  │  │          localhost.conf
-        │  │  │          
-        │  │  └─log
-        │  │          access.log
-        │  │          error.log
-        │  │          
-        │  └─uwsgi
-        │      ├─book
-        │      │      uwsgi.ini   #uwsgi配置
-        │      │      
-        │      └─hos
-        │              uwsgi.ini  #uwsgi配置
-        │              
-        └─wwwroot                 #源码地址
-            ├─book
-            │  │  manage.py
-            │  │  
-            │  └─book
-            │          settings.py
-            │          urls.py
-            │          wsgi.py
-            │          __init__.py
-            │          
+                       
+D:.
+│  .env                      # 环境变量
+│  docker-compose.yml		 # docker compose 主文件
+│  LICENSE                   # 说明文档
+│  README.md            
+│
+├─build
+│  └─django
+│          Dockerfile        # django环境build文件
+│          requirements.txt  # django环境安装插件
+│
+└─work
+    ├─components
+    │  ├─mysql
+    │  │  ├─config
+    │  │  │      my.cnf     #mysql 配置
+    │  │  │
+    │  │  ├─data
+    │  │  └─log
+    │  ├─nginx
+    │  │  ├─config
+    │  │  │  │  nginx.conf  # nginx配置
+    │  │  │  │
+    │  │  │  └─conf.d
+    │  │  │          localhost.conf
+    │  │  │
+    │  │  └─log
+    │  │          access.log
+    │  │          error.log
+    │  │
+    │  ├─redis
+    │  │  │  redis.conf
+    │  │  │
+    │  │  └─data
+    │  └─uwsgi
+    │      │  book_uwsgi.ini  #sgi配置
+    │      │  hos_uwsgi.ini
+    │      │
+    │      └─book
+    └─wwwroot
+        ├─book
+        │  │  manage.py
+        │  │
+        │  └─book
+        │          settings.py
+        │          urls.py
+        │          wsgi.py
+        │          __init__.py
+        │
+        └─hos
+            │  manage.py
+            │
             └─hos
-                │  manage.py
-                │  
-                └─hos
-                        settings.py
-                        urls.py
-                        wsgi.py
-                        __init__.py
+                    settings.py
+                    urls.py
+                    wsgi.py
+                    __init__.py
+
 ```
 
 # 部署
@@ -78,7 +82,17 @@ docker-framework
 
 >  docker-compose up -d #后台运行
 
-# 收尾
+# 配置说明：
+
+redis 登录密码 123， 端口6379
+
+mysql 用户名 root 密码 root 端口3306
+
+Book 对应的是 80端口 
+
+hos 对应的是  8080端口
+
+# 额外的动作
 
 1、 需要进入mysql配置中，创建datebase
 
