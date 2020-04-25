@@ -72,9 +72,9 @@ services:
       - "6379:6379"  
     volumes:   
       - ./work/components/redis/data:/data
-      - ./work/components/redis/config:/docker/config
+      - ./work/components/redis/redis.conf:/etc/redis/redis.conf
     command: 
-      redis-server /docker/config/redis.conf
+      redis-server /etc/redis/redis.conf
     restart: always   
     privileged: true   
     networks:    #定义mariadb容器的网桥名称和IP地址
