@@ -76,7 +76,7 @@ docker-framework
 
 2、使用docker命令部署
 
->  docker-compose up .
+>  docker-compose up -d #后台运行
 
 # 收尾
 

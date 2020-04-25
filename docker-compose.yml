@@ -8,7 +8,7 @@ services:
         context: ./build/django
       volumes: #项目数据持久化配置---包括项目、uwsgi配置文件
         - ${PROJECT_FOLDER}/book:/wwwroot/book
-        - ./work/components/uwsgi/book/uwsgi.ini:/etc/uwsgi/book/uwsgi.ini
+        - ./work/components/uwsgi/book_uwsgi.ini:/etc/uwsgi/book/uwsgi.ini
       restart: always #系统重启后容器自动启动
       privileged: true   #容器启动后是否有系统权限
       networks:   #定义该容器的网桥名称和IP地址
@@ -23,7 +23,7 @@ services:
         context: ./build/django
       volumes: #项目数据持久化配置---包括项目、uwsgi配置文件
         - ${PROJECT_FOLDER}/hos:/wwwroot/hos
-        - ./work/components/uwsgi/hos/uwsgi.ini:/etc/uwsgi/hos/uwsgi.ini
+        - ./work/components/uwsgi/hos_uwsgi.ini:/etc/uwsgi/hos/uwsgi.ini
       restart: always  #系统重启后容器自动启动
       privileged: true  #容器启动后是否有系统权限
       networks:   #定义该容器的网桥名称和IP地址
@@ -64,6 +64,23 @@ services:
       networks:    #定义mariadb容器的网桥名称和IP地址
         net-django:  
           ipv4_address: 10.127.2.2
+
+  ### Mariadb container #########################################
+  redis:
+    image: redis   
+    ports:   
+      - "6379:6379"  
+    volumes:   
+      - ./work/components/redis/data:/data
+      - ./work/components/redis/config:/docker/config
+    command: 
+      redis-server /docker/config/redis.conf
+    restart: always   
+    privileged: true   
+    networks:    #定义mariadb容器的网桥名称和IP地址
+      net-django:  
+        ipv4_address: 10.127.2.6
+      
 
 ### Add Network Bridge info #########################################
 networks:   #定义整个docker-compose编排的容器使用的网桥名称和IP地址网段，注意 x.x.x.1不能使用
