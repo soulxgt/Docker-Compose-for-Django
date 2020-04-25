@@ -1,5 +1,5 @@
 #定义该镜像使用的基础镜像为：python:3.7.4-stretch
-FROM python:3.7.4-stretch
+FROM python:3.6.8-stretch
 
 #定义容器的工作目录
 WORKDIR /wwwroot
